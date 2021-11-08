@@ -61,183 +61,311 @@ class _Home extends State<Home> {
     super.dispose();
   }
 
-  void deletePost(postID) {
-    channel.sink.add('{"type":"delete_post","data":{"postId":"$postID"}}');
-  }
-
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-        create: (context) => NameCubit(),
-        child: Scaffold(
-            drawer: Drawer(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: [
-                  Container(
-                    margin: const EdgeInsets.only(
-                        left: 10, right: 10, top: 5, bottom: 5),
-                    decoration: BoxDecoration(
-                      border: Border.all(
-                        color: Colors.black,
-                      ),
-                      color: Colors.amberAccent,
-                    ),
-                    height: 120,
+      create: (context) => NameCubit(),
+      child: Scaffold(
+        drawer: Drawer(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: [
+              Container(
+                margin: const EdgeInsets.only(
+                    left: 10, right: 10, top: 5, bottom: 5),
+                decoration: BoxDecoration(
+                  border: Border.all(
+                    color: Colors.black,
                   ),
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      TextButton(
-                          onPressed: () async {
-                            Navigator.push(
+                  color: Colors.amberAccent,
+                ),
+                height: 120,
+              ),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  TextButton(
+                      onPressed: () async {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (_) => About_us(),
+                            ));
+                      },
+                      child: Text('About Our App')),
+                  TextButton(
+                      onPressed: () {
+                        Navigator.popAndPushNamed(context, '/');
+                      },
+                      child: Text('Log Out')),
+                ],
+              )
+            ],
+          ),
+        ),
+        appBar: AppBar(
+          centerTitle: true,
+          title: Text("ALL POSTS"),
+          actions: [
+            IconButton(
+                onPressed: () {
+                  setState(() {
+                    print(favouriteClicked);
+                    if (favouriteClicked == true) {
+                      favouriteClicked = false;
+                    } else {
+                      favouriteClicked = true;
+                    }
+                  });
+                },
+                icon: Icon(Icons.favorite_sharp)),
+          ],
+          backgroundColor: Colors.lightBlue,
+        ),
+        floatingActionButton: FloatingActionButton(
+          onPressed: () async {
+            Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (_) => Add_post(channel: channel),
+                ));
+          },
+          child: const Icon(Icons.add),
+          backgroundColor: Colors.green,
+        ),
+        body: (favouriteClicked == false)
+            ? BlocBuilder<NameCubit, String>(
+                builder: (context, index) {
+                  print(posts.length);
+                  return ListView.builder(
+                      itemCount: posts.length,
+                      itemBuilder: (context, index) {
+                        return Card(
+                          elevation: 10.0,
+                          child: InkWell(
+                            onTap: () {
+                              Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                  builder: (_) => About_us(),
-                                ));
-                          },
-                          child: Text('About Our App')),
-                      TextButton(
-                          onPressed: () {
-                            Navigator.popAndPushNamed(context, '/');
-                          },
-                          child: Text('Log Out')),
-                    ],
-                  )
-                ],
-              ),
-            ),
-            appBar: AppBar(
-              centerTitle: true,
-              title: Text("ALL POSTS"),
-              actions: [],
-              backgroundColor: Colors.lightBlue,
-            ),
-            floatingActionButton: FloatingActionButton(
-              onPressed: () async {
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (_) => Add_post(channel: channel),
-                    ));
-              },
-              child: const Icon(Icons.add),
-              backgroundColor: Colors.green,
-            ),
-            body: BlocBuilder<NameCubit, String>(
-              builder: (context, index) {
-                print(posts.length);
-                return ListView.builder(
-                    itemCount: posts.length,
-                    itemBuilder: (context, index) {
-                      return Card(
-                        elevation: 10.0,
-                        child: InkWell(
-                          onTap: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => DetailsPage(
-                                  title: posts[index]['title'],
-                                  description: posts[index]['description'],
-                                  url: posts[index]['image'],
+                                  builder: (context) => DetailsPage(
+                                    title: posts[index]['title'],
+                                    description: posts[index]['description'],
+                                    url: posts[index]['image'],
+                                  ),
                                 ),
-                              ),
-                            );
-                            // Move to post details page
-                          },
-                          child: Container(
-                            padding: EdgeInsets.all(10.0),
-                            child: Row(children: [
-                              Image(
-                                image: NetworkImage(Uri.parse(
-                                                posts[index]['image'])
-                                            .isAbsolute &&
-                                        posts[index].containsKey('image')
-                                    ? '${posts[index]['image']}'
-                                    : 'https://www.freevector.com/uploads/vector/preview/31317/Revision_Freevector_Halloween-Festivity_Illustration_Mf0721.jpg'),
-                                height: 100,
-                                width: 100,
-                              ),
-                              Container(
-                                  padding: const EdgeInsets.only(
-                                      left: 10, right: 10),
+                              );
+                              // Move to post details page
+                            },
+                            child: Container(
+                              padding: EdgeInsets.all(10.0),
+                              child: Row(children: [
+                                Image(
+                                  image: NetworkImage(Uri.parse(
+                                                  posts[index]['image'])
+                                              .isAbsolute &&
+                                          posts[index].containsKey('image')
+                                      ? '${posts[index]['image']}'
+                                      : 'https://www.freevector.com/uploads/vector/preview/31317/Revision_Freevector_Halloween-Festivity_Illustration_Mf0721.jpg'),
+                                  height: 100,
+                                  width: 100,
+                                ),
+                                Container(
+                                    padding: const EdgeInsets.only(
+                                        left: 10, right: 10),
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.start,
+                                      children: [
+                                        Text(
+                                          '${posts[index]["title"].toString().characters.take(20)}',
+                                          style: const TextStyle(
+                                              fontWeight: FontWeight.bold),
+                                        ),
+                                        Text(
+                                          'Created by ${posts[index]["author"].toString().characters.take(15)}',
+                                          style: const TextStyle(
+                                              fontWeight: FontWeight.bold),
+                                          overflow: TextOverflow.ellipsis,
+                                        ),
+                                        Text(
+                                          'Date Created: ${posts[index]["date"].toString().characters.take(10)}',
+                                          style: const TextStyle(
+                                              fontWeight: FontWeight.bold),
+                                          overflow: TextOverflow.ellipsis,
+                                        ),
+                                      ],
+                                    )),
+                                Container(
                                   child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    mainAxisAlignment: MainAxisAlignment.start,
+                                    mainAxisAlignment: MainAxisAlignment.end,
                                     children: [
-                                      Text(
-                                        '${posts[index]["title"].toString().characters.take(20)}',
-                                        style: const TextStyle(
-                                            fontWeight: FontWeight.bold),
-                                      ),
-                                      Text(
-                                        'Created by ${posts[index]["author"].toString().characters.take(15)}',
-                                        style: const TextStyle(
-                                            fontWeight: FontWeight.bold),
-                                        overflow: TextOverflow.ellipsis,
-                                      ),
-                                      Text(
-                                        'Date Created: ${posts[index]["date"].toString().characters.take(10)}',
-                                        style: const TextStyle(
-                                            fontWeight: FontWeight.bold),
-                                        overflow: TextOverflow.ellipsis,
+                                      Column(
+                                        children: [
+                                          FavoriteButton(
+                                              iconSize: 30.0,
+                                              valueChanged: (isFavorite) {
+                                                setState(() {
+                                                  isFavorite = true;
+                                                  if (favoritePosts
+                                                      .contains(posts[index])) {
+                                                    favoritePosts
+                                                        .remove(posts[index]);
+                                                    print('item already added');
+                                                  } else {
+                                                    favoritePosts
+                                                        .add(posts[index]);
+                                                  }
+                                                  print(favoritePosts);
+                                                });
+                                              }),
+                                          Ink(
+                                            child: IconButton(
+                                              icon: const Icon(
+                                                  Icons.delete_forever),
+                                              color: Colors.black,
+                                              onPressed: () {
+                                                textID = posts[index]["_id"];
+                                                print(textID);
+                                                widget.channel.sink.add(
+                                                    '{"type":"delete_post","data":{"postId": "$textID"}}');
+                                              },
+                                            ),
+                                          ),
+                                          const SizedBox(
+                                            height: 20,
+                                          ),
+                                          Ink(),
+                                        ],
                                       ),
                                     ],
-                                  )),
-                              Container(
-                                child: Column(
-                                  mainAxisAlignment: MainAxisAlignment.end,
-                                  children: [
-                                    Column(
-                                      children: [
-                                        FavoriteButton(
-                                            iconSize: 30.0,
-                                            valueChanged: (isFavorite) {
-                                              setState(() {
-                                                isFavorite = true;
-                                                if (favoritePosts
-                                                    .contains(posts[index])) {
-                                                  favoritePosts
-                                                      .remove(posts[index]);
-                                                  print('item already added');
-                                                } else {
-                                                  favoritePosts
-                                                      .add(posts[index]);
-                                                }
-                                                print(favoritePosts);
-                                              });
-                                            }),
-                                        Ink(
-                                          child: IconButton(
-                                            icon: const Icon(
-                                                Icons.delete_forever),
-                                            color: Colors.black,
-                                            onPressed: () {
-                                              textID = posts[index]["_id"];
-                                              print(textID);
-                                              widget.channel.sink.add(
-                                                  '{"type":"delete_post","data":{"postId": "$textID"}}');
-                                            },
-                                          ),
-                                        ),
-                                        const SizedBox(
-                                          height: 20,
-                                        ),
-                                        Ink(),
-                                      ],
-                                    ),
-                                  ],
-                                ),
-                              )
-                            ]),
+                                  ),
+                                )
+                              ]),
+                            ),
                           ),
-                        ),
-                      );
-                    });
-              },
-            )));
+                        );
+                      });
+                },
+              )
+            : BlocBuilder<NameCubit, String>(
+                builder: (context, index) {
+                  print(favoritePosts.length);
+                  return ListView.builder(
+                      itemCount: favoritePosts.length,
+                      itemBuilder: (context, index) {
+                        return Card(
+                          elevation: 10.0,
+                          child: InkWell(
+                            onTap: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => DetailsPage(
+                                    title: posts[index]['title'],
+                                    description: posts[index]['description'],
+                                    url: posts[index]['image'],
+                                  ),
+                                ),
+                              );
+                              // Move to post details page
+                            },
+                            child: Container(
+                              padding: EdgeInsets.all(10.0),
+                              child: Row(children: [
+                                Image(
+                                  image: NetworkImage(Uri.parse(
+                                                  posts[index]['image'])
+                                              .isAbsolute &&
+                                          posts[index].containsKey('image')
+                                      ? '${posts[index]['image']}'
+                                      : 'https://www.freevector.com/uploads/vector/preview/31317/Revision_Freevector_Halloween-Festivity_Illustration_Mf0721.jpg'),
+                                  height: 100,
+                                  width: 100,
+                                ),
+                                Container(
+                                    padding: const EdgeInsets.only(
+                                        left: 10, right: 10),
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.start,
+                                      children: [
+                                        Text(
+                                          '${posts[index]["title"].toString().characters.take(20)}',
+                                          style: const TextStyle(
+                                              fontWeight: FontWeight.bold),
+                                        ),
+                                        Text(
+                                          'Created by ${posts[index]["author"].toString().characters.take(15)}',
+                                          style: const TextStyle(
+                                              fontWeight: FontWeight.bold),
+                                          overflow: TextOverflow.ellipsis,
+                                        ),
+                                        Text(
+                                          'Date Created: ${posts[index]["date"].toString().characters.take(10)}',
+                                          style: const TextStyle(
+                                              fontWeight: FontWeight.bold),
+                                          overflow: TextOverflow.ellipsis,
+                                        ),
+                                      ],
+                                    )),
+                                Container(
+                                  child: Column(
+                                    mainAxisAlignment: MainAxisAlignment.end,
+                                    children: [
+                                      Column(
+                                        children: [
+                                          FavoriteButton(
+                                              iconSize: 30.0,
+                                              valueChanged: (isFavorite) {
+                                                setState(() {
+                                                  isFavorite = true;
+                                                  if (favoritePosts
+                                                      .contains(posts[index])) {
+                                                    favoritePosts
+                                                        .remove(posts[index]);
+                                                    print('item already added');
+                                                  } else {
+                                                    favoritePosts
+                                                        .add(posts[index]);
+                                                  }
+                                                  print(favoritePosts);
+                                                });
+                                              }),
+                                          Ink(
+                                            child: IconButton(
+                                              icon: const Icon(
+                                                  Icons.delete_forever),
+                                              color: Colors.black,
+                                              onPressed: () {
+                                                textID = posts[index]["_id"];
+                                                print(textID);
+                                                widget.channel.sink.add(
+                                                    '{"type":"delete_post","data":{"postId": "$textID"}}');
+                                              },
+                                            ),
+                                          ),
+                                          const SizedBox(
+                                            height: 20,
+                                          ),
+                                          Ink(),
+                                        ],
+                                      ),
+                                    ],
+                                  ),
+                                )
+                              ]),
+                            ),
+                          ),
+                        );
+                      });
+                },
+              ),
+      ),
+    );
   }
 }

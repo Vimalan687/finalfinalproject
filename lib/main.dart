@@ -22,10 +22,10 @@ class MyApp extends StatelessWidget {
           child: MyHomePage(title: 'Flutter Capitalize'),
         ));
   }
-  
 }
-final channel =
-      IOWebSocketChannel.connect('ws://besquare-demo.herokuapp.com');
+
+final channel = IOWebSocketChannel.connect('ws://besquare-demo.herokuapp.com');
+
 class MyHomePage extends StatefulWidget {
   MyHomePage({Key? key, required this.title}) : super(key: key);
 
@@ -35,8 +35,8 @@ class MyHomePage extends StatefulWidget {
   _MyHomePageState createState() => _MyHomePageState();
 }
 
-// TextEditingController username_Input = TextEditingController();
-   String username_Input = '';
+TextEditingController username_Inpu = TextEditingController();
+String username_Input = '';
 
 class _MyHomePageState extends State<MyHomePage> {
   final _formkey = GlobalKey<FormState>();
@@ -69,11 +69,11 @@ class _MyHomePageState extends State<MyHomePage> {
                             color: Colors.white),
                         focusedBorder: UnderlineInputBorder(
                             borderSide: BorderSide(color: Colors.green))),
-                          onChanged: (String? value) {
-                                    setState(() {
-                                      username_Input = value!;
-                                    });
-                                  },  
+                    onChanged: (String? value) {
+                      setState(() {
+                        username_Input = value!;
+                      });
+                    },
                   ),
                   SizedBox(height: 20.0),
                   ElevatedButton(
@@ -88,28 +88,25 @@ class _MyHomePageState extends State<MyHomePage> {
                           textStyle: TextStyle(
                               fontSize: 20, fontWeight: FontWeight.bold)),
                       onPressed: () async {
-
                         if (username_Input.isEmpty) {
-ScaffoldMessenger.of(context)
-                                  .showSnackBar(SnackBar(
-                                content: Text("Fill all the textfield"),
-                                duration: const Duration(seconds: 2),
-                              ));                        } else {
+                          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                            content: Text("Fill all the textfield",  textAlign: TextAlign.center,                            style: TextStyle(fontSize: 18),
+
+ ),
+                            duration: const Duration(seconds: 2),
+                          ));
+                        } else {
                           context
-                                                    .read<NameCubit>()
-                                                    .login(username_Input,channel);
-                          
+                              .read<NameCubit>()
+                              .login(username_Input, channel);
+
                           Navigator.push(
-                              context,
-
-                              MaterialPageRoute(
+                            context,
+                            MaterialPageRoute(
                                 builder: (_) => Home(channel: channel)),
-
-                              );
+                          );
                         }
-                       
                       }),
-                       
                 ],
               ),
             ),
@@ -121,7 +118,6 @@ ScaffoldMessenger.of(context)
 }
 
 login() {
-  
   channel.sink.add('{"type":"sign_in","data":{"name":"$username_Input"}}');
 
   channel.stream.listen((message) {
