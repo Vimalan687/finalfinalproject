@@ -5,7 +5,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:project1/About_us.dart';
 import 'package:project1/Detail.dart';
-import 'package:project1/Favourite.dart';
 import 'package:project1/add_post.dart';
 import 'package:project1/cubit/name_cubit.dart';
 
@@ -27,7 +26,6 @@ class _Home extends State<Home> {
   dynamic decodedMessage;
   String textID = "";
 
-  List _allpost = [];
   List posts = [];
   bool isFavorite = false;
   bool favouriteClicked = false;
@@ -40,7 +38,6 @@ class _Home extends State<Home> {
       decodedMessage = jsonDecode(results);
       if (decodedMessage['type'] == 'all_posts') {
         posts = decodedMessage['data']['posts'];
-        _allpost = posts;
       }
       setState(() {});
     });

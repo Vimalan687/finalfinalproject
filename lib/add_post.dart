@@ -1,10 +1,7 @@
-import 'dart:convert';
 import 'package:form_field_validator/form_field_validator.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:project1/cubit/name_cubit.dart';
-import 'package:project1/main.dart';
-import 'package:web_socket_channel/io.dart';
 import 'package:web_socket_channel/web_socket_channel.dart';
 
 @override
@@ -37,11 +34,13 @@ class _Add_post extends State<Add_post> {
   WebSocketChannel channel;
   String title = '';
   String description = '';
-  String url = '';void checkConnect () async{
-    channel.stream.listen((event) { 
+  String url = '';
+  void checkConnect() async {
+    channel.stream.listen((event) {
       print(event);
     });
-  } 
+  }
+
   @override
   Widget build(BuildContext context) {
     return SafeArea(
@@ -140,6 +139,26 @@ class _Add_post extends State<Add_post> {
                               url.isNotEmpty) {
                             channel.sink.add(
                                 '{"type": "create_post","data": {"title": "$title", "description": "$description", "image": "$url"}}');
+                          
+                              // Move to post details page
+                            
+                            ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                              content: Text(
+                                "Data have been created",
+                                textAlign: TextAlign.center,
+                                style: TextStyle(fontSize: 18),
+                              ),
+                              duration: const Duration(seconds: 2),
+                            ));
+                          } else {
+                            ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                              content: Text(
+                                "Fill all the textfield",
+                                textAlign: TextAlign.center,
+                                style: TextStyle(fontSize: 18),
+                              ),
+                              duration: const Duration(seconds: 2),
+                            ));
 //                           channel.stream.listen((message) {
 //                             final decodeMessage = jsonDecode(message);
 
@@ -149,9 +168,7 @@ class _Add_post extends State<Add_post> {
 // channel.sink.close();
 
                             // });
-                            title = '';
-                            description = '';
-                            url = '';
+
                           }
                         }),
                     SizedBox(height: 20.0),
